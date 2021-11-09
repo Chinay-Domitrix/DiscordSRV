@@ -178,20 +178,14 @@ public class DiscordChatListener extends ListenerAdapter {
         if (shouldStripColors) message = MessageUtil.stripLegacy(message);
 
         String raw = MessageUtil.stripLegacy(message);
-        System.out.println("a: " + raw);
         boolean image = false;
         if (raw.startsWith("https://")) {
-            System.out.println("b");
             try {
                 if (ImageIO.read(new URL(raw)) != null) {
                     System.out.println("c");
                     image = true;
-                }
-            } catch (IOException ignored) {
-                System.out.println("d");
-            }
+            } catch (IOException ignored) {}
         }
-        System.out.println("e");
 
         // get the correct format message
         String destinationGameChannelNameForTextChannel = DiscordSRV.getPlugin().getDestinationGameChannelNameForTextChannel(event.getChannel());
