@@ -37,15 +37,19 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
@@ -173,6 +177,22 @@ public class DiscordChatListener extends ListenerAdapter {
             if (rolesAllowedToColor.contains(role.getName()) || rolesAllowedToColor.contains(role.getId())) shouldStripColors = false;
         if (shouldStripColors) message = MessageUtil.stripLegacy(message);
 
+        String raw = MessageUtil.stripLegacy(message);
+        System.out.println("a: " + raw);
+        boolean image = false;
+        if (raw.startsWith("https://")) {
+            System.out.println("b");
+            try {
+                if (ImageIO.read(new URL(raw)) != null) {
+                    System.out.println("c");
+                    image = true;
+                }
+            } catch (IOException ignored) {
+                System.out.println("d");
+            }
+        }
+        System.out.println("e");
+
         // get the correct format message
         String destinationGameChannelNameForTextChannel = DiscordSRV.getPlugin().getDestinationGameChannelNameForTextChannel(event.getChannel());
         String formatMessage = getMessageFormat(selectedRoles, destinationGameChannelNameForTextChannel);
@@ -260,10 +280,13 @@ public class DiscordChatListener extends ListenerAdapter {
                     nameFormat = MessageUtil.strip(nameFormat);
                     dynmapHook.broadcastMessageToDynmap(nameFormat, chatFormat);
         });
+        Component component1 = postEvent.getMinecraftMessage();
+        if (image)
+            component1 = component1.append(Component.text().content(ChatColor.GREEN + " [image]").clickEvent(ClickEvent.runCommand("/image create " + raw)));
 
         DiscordSRV.getPlugin().broadcastMessageToMinecraftServer(
                 DiscordSRV.getPlugin().getDestinationGameChannelNameForTextChannel(event.getChannel()),
-                postEvent.getMinecraftMessage(),
+                component1,
                 event.getAuthor()
         );
 

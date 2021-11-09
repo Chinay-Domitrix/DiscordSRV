@@ -75,7 +75,8 @@ public class ConsoleMessage {
         // trim
         line = line.trim();
 
-        String timestamp = TimeUtil.timeStamp();
+        //String timestamp = TimeUtil.timeStamp();
+        String timestamp = "<t:" + System.currentTimeMillis() / 1000L + ">";
         String formattedMessage = PlaceholderUtil.replacePlaceholdersToDiscord(LangUtil.Message.CONSOLE_CHANNEL_LINE.toString())
                 .replace("%date%", timestamp)
                 .replace("%datetime%", timestamp)
