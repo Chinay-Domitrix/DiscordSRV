@@ -184,6 +184,7 @@ public class DiscordChatListener extends ListenerAdapter {
                 if (ImageIO.read(new URL(raw)) != null) {
                     System.out.println("c");
                     image = true;
+                }
             } catch (IOException ignored) {}
         }
 
